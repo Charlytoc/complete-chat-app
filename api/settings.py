@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'api.authenticate',
     'api.messaging',
+    'api.seo',
 ]
 
 MIDDLEWARE = [

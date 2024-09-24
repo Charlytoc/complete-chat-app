@@ -120,7 +120,7 @@ async def get_page():
     return HTMLResponse(content="Page not found", status_code=404)
 
 
-@router.get("/chat/c/{conversation_id}", response_class=HTMLResponse)
+@router.get("/new/{page}", response_class=HTMLResponse)
 async def get_conversation():
     file_path = os.path.join("client", "dist", "index.html")
     if os.path.exists(file_path):

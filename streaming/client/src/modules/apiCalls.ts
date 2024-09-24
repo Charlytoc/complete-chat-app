@@ -45,3 +45,30 @@ export const getConversation = async (conversationId: string) => {
     throw error;
   }
 };
+
+
+export const getSuggestion = async (articleSlug: string) => {
+  const endpoint = `${API_URL}/v1/seo/suggestions/${articleSlug}`;
+
+  try {
+    const response = await axios.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching suggestion:", error);
+    throw error;
+  }
+};
+
+
+export const fetchArticles = async () => {
+  try {
+    const response = await axios.get(API_URL + "/v1/seo/suggestions");
+    if (response.status === 200) {
+      return response.data
+    } else {
+      console.error("Error fetching articles");
+    }
+  } catch (error) {
+    console.error("Error fetching articles", error);
+  }
+};

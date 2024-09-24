@@ -23,6 +23,7 @@ from django.conf import settings
 apps = [
     ('v1/auth/', 'api.authenticate.urls', 'auth'),
     ('v1/messaging/', 'api.messaging.urls', 'messaging'),
+    ('v1/seo/', 'api.seo.urls', 'seo'),
 ]
 
 urlpatterns_apps = [path(url, include(urlconf, namespace=namespace)) for url, urlconf, namespace in apps]

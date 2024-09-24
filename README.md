@@ -4,12 +4,21 @@ Masscer AI Project
 ```
 py -m venv venv
 ```
-2. ## Get inside the environment
+2. ## Install the requirements
 ```
-venv\Scripts\activate
+./install.sh
 ```
+3. ## Turn on the Django and the FastAPI applications
 Or pressing F1, this will open the command palette, > Python: Select Interpreter
 And select the venv
+```bash
+./init.sh
+```
+
+4. If you need to create a super user you can do it with
+```bash
+python manage.py createsuperuser
+```
 
 3. ## Install
 Python requirements
@@ -21,7 +30,7 @@ Node requirements
 cd streaming/ && npm i && cd .. 
 ```
 
-
+<!-- 
 4. ## Init
 This will install the dependencies, run the migrations and start the project at port 8000
 
@@ -60,4 +69,4 @@ FastAPI server will live at: [http://127.0.0.1:8001/](http://127.0.0.1:8001/)
 
 Flower if you are using flower:
 
-Inspect tasks at: [http://127.0.0.1:5555/](http://127.0.0.1:5555/)
+Inspect tasks at: [http://127.0.0.1:5555/](http://127.0.0.1:5555/) -->

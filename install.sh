@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# exit on error
 
 set -o errexit
 
+source venv/Scripts/activate
+
 pip install -r requirements.txt
 
-python manage.py migrate
+cd ./streaming
 
-python manage.py runserver
+npm i
+

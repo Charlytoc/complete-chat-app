@@ -2,6 +2,7 @@
 
 source venv/Scripts/activate
 
+python manage.py migrate 
 # Run Django application
 python manage.py runserver &
 

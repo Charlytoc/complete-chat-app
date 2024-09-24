@@ -7,7 +7,7 @@ export const Navbar = () => {
     <nav className="navbar">
       <section className="nerko-one-regular">
         <h1>
-          Masscer<strong> AI</strong>
+          SEO<strong> AI</strong>
         </h1>
       </section>
       <section>
