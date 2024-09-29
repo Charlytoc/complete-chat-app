@@ -10,8 +10,10 @@ import Signup from "./routes/signup/page.tsx";
 import ChatView from "./routes/chat/page.tsx";
 import Layout from "./routes/Layout.tsx";
 import Login from "./routes/login/page.tsx";
-import { Article } from "./routes/article/page.tsx";
-import { articleLoader } from "./routes/article/loader.ts"
+import ArticleList from "./routes/article/page.tsx";
+import ArticleDetail from "./components/Article/ArticleDetail";
+import { articleLoader } from "./routes/article/loader.ts";
+
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,16 @@ const router = createBrowserRouter([
         path: "/",
         element: <Root />,
         loader: rootLoader,
+      },
+      {
+        path: "article",
+        element: <ArticleList />,
+        loader: articleLoader,
+      },
+      {
+        path: "article/:slug",
+        element: <ArticleDetail />,
+        loader: articleLoader,
       },
     ],
   },
@@ -49,11 +61,6 @@ const router = createBrowserRouter([
   //     },
   //   ],
   // },
-  {
-    path: "/article",
-    element: <Article />,
-    loader: articleLoader
-  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

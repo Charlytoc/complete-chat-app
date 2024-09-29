@@ -75,3 +75,40 @@ class Suggestion(models.Model):
         return f'Suggestion(for={self.article.title})'
 
 
+class SystemPromptModel(models.Model):
+    keywords = models.TextField()
+    internal_linking = models.TextField()
+
+    def generate_prompt(self):
+        return f"""
+You are a SEO specialist. 
+Refactor the following article to optimize the internal linking of it.
+The keywords of the article is: {self.keywords}
+Note: If there are a empty list of keywords, please suggest at least 3.
+
+Please write the SuggestionsList like a SEO expert with more than 40 years of experience. The goal is to IMPROVE parts of the article. You must identify areas where an internal linking may be beneficial using the provided links down below. The internal linking should be made properly following SEO tips.
+
+For example: 
+original_text: "To create an AI application we must think about the features we want to add"
+replacement_text: "To [create an AI application](link for some related article that talks about this topic) we must think about the features we want to add"
+
+Also, if you identify that the content of the article may be extended in some part, feel free to add it!
+
+You have all free creative thinking.
+
+---LINKS YOU MAY USE FOR INTERNAL LINKING
+{self.internal_linking}
+---
+
+The task is to REWRITE parts of the article to improve **internal linking**.
+
+- Suggest at least 20 changes that can be made to the article.
+- Keep in mind this about each suggestion: 
+The `original_text` must be an exact match of the part of the article where an internal link can be added. Keep in mind that this text must have at least 5 words in order to avoid problems when replacing the content with the suggested one.
+
+The `replacement_text` must replace the original_text adding internal links or improving misspellings, fixing things...
+
+- You can also suggest new articles to create them if you think is necessary. To do so, when adding the link so it like: [NEW: text of the link](possible article link)
+
+- Think about missing topics in the article based on the provided search results article that can be added to the content.
+        """

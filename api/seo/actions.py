@@ -4,7 +4,7 @@ import os
 import xml.etree.ElementTree as ET
 from django.utils import timezone
 from django.contrib.auth.models import User
-from .models import Article, Sitemap, Suggestion
+from .models import Article, Sitemap, SystemPromptModel
 from openai import OpenAI
 
 
@@ -15,42 +15,7 @@ def generate_system_prompt(keywords, internal_linking):
     :param keyword: The keyword to optimize the article for
     :return: The system prompt
     """
-    return f"""
-You are a SEO specialist. 
-Refactor the following article to optimize the internal linking of it.
-The keywords of the article is: {keywords}
-Note: If there are a empty list of keywords, please suggest at least 3.
-
-Please write the SuggestionsList like a SEO expert with more than 40 years of experience. The goal is to IMPROVE parts of the article. You must identify areas where an internal linking may be beneficial using the provided links down below. The internal linking should be made properly following SEO tips.
-
-For example: 
-original_text: "To create an AI application we must think about the features we want to add"
-replacement_text: "T0 [create an AI application](link for some related article that talks about this topic) we must think about the features we want to add"
-
-Also, if you identify that the content of the article may be extended in some part, feel free to add it!
-
-You have all free creative thinking.
-
----LINKS YOU MAY USE FOR INTERNAL LINKING
-{internal_linking}
----
-
-The task is to REWRITE parts of the article to improve **internal linking**.
-
-- Suggest at least 20 changes that can be made to the article.
-- Keep in mind this about each suggestion: 
-The `original_text` must be an exact match of the part of the article where an internal link can be added. Keep in mind that this text must have at least 5 words in order to avoid problems when replacing the content with the suggested one.
-
-- 
-
-The `replacement_text` must replace the original_text adding internal links or improving misspelings, fixing things...
-
-- You can also suggest new article to create them if you think is necessary. To do so, when adding the link so it like: [NEW: text of the link](possible article link)
-
-- Think about missing topics in the article based in the provided search results article that can be added to the content.
-
-
-    """
+    return SystemPromptModel(keywords=keywords, internal_linking=internal_linking)
 
 
 def fetch_sitemap_urls(sitemap_url):
@@ -168,7 +133,7 @@ class SuggestionModel(BaseModel):
 
 
 def create_structured_completion(
-    structure: BaseModel, system_prompt: str, user_message: str
+    structure: BaseModel, system_prompt: SystemPromptModel, user_message: str
 ):
     client = OpenAI(
         api_key=os.environ.get("OPENAI_API_KEY"),
@@ -176,7 +141,7 @@ def create_structured_completion(
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-2024-08-06",
         messages=[
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": system_prompt.generate_prompt()},
             {"role": "user", "content": user_message},
         ],
         response_format=structure,
@@ -190,25 +155,5 @@ class SuggestionsList(BaseModel):
 
 
 def suggest_changes_to_article(article_id: int):
-
-    a = Article.objects.get(pk=article_id)
-    all_articles_with_the_same_language = Article.objects.filter(language=a.language)
-    articles_links = "\n".join(
-        [f"{a.title}: {a.url}" for a in all_articles_with_the_same_language]
-    )
-
-    system_prompt = generate_system_prompt(a.keywords, articles_links)
-
-    article_text = f"{a.content}"
-
-    suggestions_list: SuggestionsList = create_structured_completion(
-        SuggestionsList, system_prompt, article_text
-    )
-    for s in suggestions_list.suggestions:
-        Suggestion.objects.create(
-            original_text=s.original_text,
-            replacement_text=s.replacement_text,
-            article=a,
-        )
-
-    return suggestions_list
+    from .tasks import suggest_changes_to_article_task  # Importar aquí para evitar la importación circular
+    suggest_changes_to_article_task.delay(article_id)
