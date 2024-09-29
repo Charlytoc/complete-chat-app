@@ -30,6 +30,7 @@ Node requirements
 cd streaming/ && npm i && cd .. 
 ```
 
+hola
 <!-- 
 4. ## Init
 This will install the dependencies, run the migrations and start the project at port 8000
