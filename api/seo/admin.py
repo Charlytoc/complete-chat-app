@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from .models import Sitemap, Article, ArticleVersion, Suggestion
+from .models import Sitemap, Article, ArticleVersion, Suggestion, SystemPromptModel
 from .tasks import async_create_article_from_sitemap
 from .actions import suggest_changes_to_article
 
@@ -41,3 +41,9 @@ class ArticleVersionAdmin(admin.ModelAdmin):
     list_display = ("article", "version_number", "created_at", "updated_at")
     list_filter = ("article", "created_at", "updated_at")
     search_fields = ("article__title", "keywords")
+    
+    
+@admin.register(SystemPromptModel)
+class SystemPromptModelAdmin(admin.ModelAdmin):
+    list_display = ("keywords", "internal_linking")
+    search_fields = ("keywords", "internal_linking")
