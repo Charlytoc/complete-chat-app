@@ -119,6 +119,21 @@ async def get_page():
         return HTMLResponse(content=html_content)
     return HTMLResponse(content="Page not found", status_code=404)
 
+@router.get("/article/{page_name}", response_class=HTMLResponse)
+async def get_article():
+    file_path = os.path.join("client", "dist", "index.html")
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            html_content = file.read()
+        # data = routes_meta.get(page_name, routes_meta["defaults"])
+
+        # for key, value in data.items():
+        #     placeholder = f"{{{{{key}}}}}"
+        #     html_content = html_content.replace(placeholder, value)
+
+        return HTMLResponse(content=html_content)
+    return HTMLResponse(content="Page not found", status_code=404)
+
 
 @router.get("/new/{page}", response_class=HTMLResponse)
 async def get_conversation():
