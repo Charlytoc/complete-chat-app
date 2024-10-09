@@ -34,3 +34,7 @@ __pycache__
 test.db
 
 db.sqlite3
+
+project_structure.txt
+estructura_proyecto.txt
+generate_project_structure.py
