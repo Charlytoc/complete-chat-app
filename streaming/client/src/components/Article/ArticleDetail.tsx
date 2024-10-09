@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import ReactQuill from "react-quill";
@@ -23,8 +23,18 @@ interface SuggestionData {
 }
 
 const ArticleDetail: React.FC = () => {
-  const loaderData = useLoaderData() as SuggestionData;
-  console.log(loaderData);
+  const loaderData = useLoaderData() as SuggestionData; 
+  const [editorContent, setEditorContent] = useState(loaderData.article.content);
+
+  const modules = {
+    toolbar: [
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline'], 
+      ['link', 'image'], 
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['clean'],
+    ],
+  };
 
   return (
     <div className="article-detail-container">
@@ -38,7 +48,9 @@ const ArticleDetail: React.FC = () => {
       <div className="article-detail-section">
         <div className="react-quill-container">
           <ReactQuill
-            value={loaderData.article.content}
+            value={editorContent}
+            onChange={setEditorContent} 
+            modules={modules}
             placeholder="Enter your text here"
           />
         </div>

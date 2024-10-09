@@ -41,13 +41,19 @@ class SuggestionsView(View):
                 article=article, status=Suggestion.PENDING
             )
             if pending_suggestions.exists():
-                suggestion = random.choice(pending_suggestions)
+                # suggestion = random.choice(pending_suggestions)
                 article_serializer = ArticleSerializer(article)
-                suggestion_serializer = SuggestionSerializer(suggestion)
+                # suggestion_serializer = SuggestionSerializer(suggestion)
+                suggestions_data = []
+                
+                for suggestion in pending_suggestions:
+                    suggestion_serializer = SuggestionSerializer(suggestion)
+                    suggestions_data.append(suggestion_serializer.data)
+                    
                 return JsonResponse(
                     {
                         "article": article_serializer.data,
-                        "suggestion": suggestion_serializer.data,
+                        "suggestion": suggestions_data,
                     }
                 )
             else:
