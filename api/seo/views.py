@@ -11,6 +11,7 @@ import random
 from rest_framework.permissions import AllowAny
 from .serializers import ArticleSerializer, SuggestionSerializer
 
+
 def hello_world(request):
     return JsonResponse({"message": "hello world"})
 
@@ -45,11 +46,11 @@ class SuggestionsView(View):
                 article_serializer = ArticleSerializer(article)
                 # suggestion_serializer = SuggestionSerializer(suggestion)
                 suggestions_data = []
-                
+
                 for suggestion in pending_suggestions:
                     suggestion_serializer = SuggestionSerializer(suggestion)
                     suggestions_data.append(suggestion_serializer.data)
-                    
+
                 return JsonResponse(
                     {
                         "article": article_serializer.data,
@@ -76,11 +77,12 @@ class SuggestionsView(View):
                     )
             return JsonResponse(response_data, safe=False)
 
-    def put(self, request, article_slug, suggestion_id):
+    def put(self, request, article_slug):
         try:
             data = json.loads(request.body)
             new_status = data.get("new_status")
-            article_content = data.get("article_content")
+            suggestion_id = data.get("suggestion_id")
+            article_content = data.get("article_content", "")
 
             if new_status not in [Suggestion.REJECTED, Suggestion.ACCEPTED]:
                 return JsonResponse({"message": "Invalid status."}, status=400)

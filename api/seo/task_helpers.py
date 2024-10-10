@@ -21,4 +21,4 @@ def suggest_changes_to_article_logic(article_id: int):
             article=a,
         )
 
-    return suggestions_list
+    return True

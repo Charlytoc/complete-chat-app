@@ -23,6 +23,7 @@ class Article(models.Model):
     language = models.CharField(max_length=10)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # TODO: Add property academy_id, this will be an integer field, it can be null or blank
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
