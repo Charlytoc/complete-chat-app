@@ -56,10 +56,34 @@ const ArticleDetail: React.FC = () => {
     const rejectedSuggestion = suggestionsCopy.shift();
 
     setSuggestions(suggestionsCopy);
+    console.log(loaderData.article.slug);
 
     // TODO:: Sent a PUT request to the route v1/seo/article/{article_slug}
     // In the JSON include the suggestion_id and the new_status, in this case: REJECTED
     // JSON.stringify{suggestion_id: {rejectedSuggestion.id}, new_status:"REJECTED" }
+    fetch(`v1/seo/article/${loaderData.article.slug}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        // @ts-ignore
+        suggestion_id: rejectedSuggestion.id,
+        new_status: "REJECTED"
+      }),      
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Success: ', data);      
+    })
+    .catch((error) => {
+      console.error('Error: ', error)
+    });
   };
   const acceptSuggestion = (replacementText: string) => {
     // @ts-ignore
@@ -75,9 +99,33 @@ const ArticleDetail: React.FC = () => {
 
       setSuggestions(suggestionsCopy);
       setEditorContent(newContent);
+      console.log(loaderData.article.slug);
 
       // TODO: SENT A PUT REQUEST TO THE BACKEND 
       // {new_status: "ACCEPTED", article_content: newContent, suggestion_id: suggestionAccepted.id}
+      fetch(`v1/seo/article/${loaderData.article.slug}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          new_status: "ACCEPTED",
+          article_content: newContent,
+          suggestion_id: aceptedSuggestion.id,
+        }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Succes: ', data);
+      })
+      .catch((error) => {
+        console.error('Error: ',error);
+      });
     }
   };
 

@@ -24,6 +24,7 @@ class Article(models.Model):
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     # TODO: Add property academy_id, this will be an integer field, it can be null or blank
+    academy_id = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
