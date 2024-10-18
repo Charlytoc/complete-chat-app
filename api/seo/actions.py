@@ -102,6 +102,7 @@ def create_article_from_json(sitemap: Sitemap, json_data):
             "url": json_data.get("url", None),
             "description": json_data.get("description", ""),
             # TODO: ADd the academy property when creating the articles
+            "academy_id": json_data.get("academy_id", None),
         },
     )
     return article

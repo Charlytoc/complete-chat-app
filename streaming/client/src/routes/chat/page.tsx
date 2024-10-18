@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import io from "socket.io-client";
 import "./page.css";
 import { Message } from "../../components/Message/Message";
 import { ChatInput } from "../../components/ChatInput/ChatInput";
@@ -12,16 +11,12 @@ import { TChatLoader, TMessage } from "../../types/chatTypes";
 import { ChatHeader } from "../../components/ChatHeader/ChatHeader";
 import toast, { Toaster } from "react-hot-toast";
 import { playAudioFromBytes } from "../../modules/utils";
+import socketManager from "../../modules/socket/socketManager";
 
-const socket = io("http://localhost:8001", {
-  autoConnect: false,
-  transports: ["websockets", "polling"],
-});
 
 export default function ChatView() {
   const loaderData = useLoaderData() as TChatLoader;
 
-  const token = localStorage.getItem("token");
   const { chatState, input, setInput, model, conversation, cleanAttachments } =
     useStore((state) => ({
       chatState: state.chatState,
@@ -38,11 +33,11 @@ export default function ChatView() {
   );
 
   useEffect(() => {
-    socket.on("connect", () => {
+    socketManager.on("connect", () => {
       console.log("Connected to socket server");
     });
 
-    socket.on("disconnect", () => {
+    socketManager.on("disconnect", () => {
       console.log("Disconnected from socket server");
     });
 
@@ -63,24 +58,24 @@ export default function ChatView() {
       return newMessages;
     };
 
-    socket.on("response", (data) => {
+    socketManager.on("response", (data) => {
       setMessages(updateMessages(data.chunk));
     });
-    socket.on("audio-file", (audioFile) => {
+    socketManager.on("audio-file", (audioFile) => {
       playAudioFromBytes(audioFile);
     });
 
-    socket.on("responseFinished", (data) => {
+    socketManager.on("responseFinished", (data) => {
       console.log("Response finished:", data);
-      socket.disconnect();
+      socketManager.disconnect();
     });
 
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("response");
-      socket.off("audio-file");
-      socket.off("responseFinished");
+      socketManager.off("connect");
+      socketManager.off("disconnect");
+      socketManager.off("response");
+      socketManager.off("audio-file");
+      socketManager.off("responseFinished");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
@@ -93,7 +88,7 @@ export default function ChatView() {
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    socket.connect();
+    socketManager.connect();
     const userMessage = {
       type: "user",
       text: input,
@@ -102,24 +97,12 @@ export default function ChatView() {
     setMessages([...messages, userMessage]);
 
     try {
-      const token = localStorage.getItem("token");
-      socket.emit(
-        "message",
-        {
-          message: {
-            type: "user",
-            text: input,
-            attachments: chatState.attachments,
-          },
+      socketManager.emit("message", {
+          message: userMessage,
           context: messages.map((msg) => `${msg.type}: ${msg.text}`).join("\n"),
           model: model,
-          token: token,
           conversation: conversation ? conversation : loaderData.conversation,
-        },
-        (ack) => {
-          console.log(ack, "ACK FROM SERVER ?");
-        }
-      );
+        });
 
       setInput("");
       cleanAttachments();
@@ -130,11 +113,11 @@ export default function ChatView() {
 
   const handleGenerateSpeech = async (text) => {
     try {
-      socket.connect();
+      socketManager.connect();
 
       // TODO: Send the token in every socket event, maybe we need to have a socket manager for the client ir order to have a straightforward interface
       // const token = localStorage.getItem("token");
-      socket.emit("speech_request", {
+      socketManager.emit("speech_request", {
         text,
       });
     } catch (error) {
@@ -149,7 +132,7 @@ export default function ChatView() {
         { prompt: text },
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
         }
       );
@@ -202,8 +185,7 @@ export default function ChatView() {
         <div className="chat-messages">
           {messages &&
             messages.map((msg, index) => (
-              <Message
-       
+              <Message       
                 {...msg}
                 key={index}
                 onGenerateSpeech={handleGenerateSpeech}

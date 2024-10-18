@@ -48,6 +48,8 @@
 
 
 .suggestion-component {
-   background-color: rgb(58, 58, 58);
+   /* background-color: rgb(58, 58, 58); */
+   background-color: white;
+   color: black;
    position: relative;
 }
