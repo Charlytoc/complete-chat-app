@@ -1,19 +1,20 @@
-.article-detail-container {
+:root {
+  --primary-color: #005d93;
+  --secondary-color: #0097b2;
+  --accent-color: #f9a825;
+  --background-color: #f5f7fa;
+  --text-color: #333333;
+  --muted-color: #828282;
+  --border-color: #e0e0e0;
+}
+
+/* .article-detail-container {
   display: flex;
   flex-wrap: wrap;
   padding: 10px;
   box-sizing: border-box;
-  height: 100vh; /* Mantiene la altura de la vista */
+  height: 100vh;
 }
-
-/* .article-detail-section {
-  flex: 1;
-  padding: 10px;
-  box-sizing: border-box;
-  min-width: 300px; 
-  max-height: calc(100vh - 20px); 
-  overflow-y: auto;
-} */
 
 .article-detail-section h3 {
   margin-top: 0;
@@ -23,22 +24,22 @@
   border: 1px solid #ddd;
   padding: 10px;
   border-radius: 4px;
-  overflow: auto; /* Permite desplazamiento si es necesario */
+  overflow: auto; 
 }
 
 .react-quill-container {
   height: calc(
     100% - 20px
-  ); /* Ajusta la altura para el espacio superior e inferior */
+  ); 
   display: flex;
   flex-direction: column;
 }
 
 .react-quill-container .ql-editor {
-  flex: 1; /* Permite que el editor crezca */
-  overflow-y: auto; /* Permite desplazamiento vertical */
-  border: 1px solid #ddd; /* Bordes para mejor visualización */
-  padding: 10px; /* Espacio interno */
+  flex: 1;
+  overflow-y: auto; 
+  border: 1px solid #ddd; 
+  padding: 10px; 
 }
 
 .suggestion-modal {
@@ -46,10 +47,111 @@
   color: white;
 }
 
-
 .suggestion-component {
-   /* background-color: rgb(58, 58, 58); */
    background-color: white;
    color: black;
    position: relative;
+} */
+
+/* ----------------- */
+
+.article-detail-container {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+h3 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.article-detail-section {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  line-height: 1.6;
+}
+
+.suggestion-component {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.suggestion-component button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.suggestion-component button:hover {
+  background-color: var(--secondary-color);
+}
+
+.suggestion-component .suggestion-modal {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  border-radius: 4px;
+  min-width: 200px;
+  color: var(--text-color);
+  cursor: text;
+  outline: none;
+}
+
+.suggestion-component .suggestion-modal:focus {
+  border-color: var(--accent-color);
+}
+
+.suggestion-modal {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-modal[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+}
+
+.suggestion-modal:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-color);
+}
+
+.suggestion-component .suggestion-modal:hover {
+  background-color: #ffffff;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  background-color: var(--accent-color);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--accent-color);
 }
