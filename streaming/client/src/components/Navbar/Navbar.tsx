@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 export const Navbar = () => {
   return (
     <nav className="navbar">
-      <section className="nerko-one-regular">
+      <section className="logo">
         <h1>
-          SEO<strong> AI</strong>
+          <strong>Chaseo</strong>
         </h1>
       </section>
-      <section>
+      <section className="nav-links">
         <Link className="highlighted" to={"/signup"}>Signup</Link>
         <Link to={"/login"}>Login</Link>
       </section>
