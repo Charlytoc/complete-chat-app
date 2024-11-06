@@ -8,7 +8,8 @@ import "./ArticleDetail.css";
 interface Article {
   title: string;
   slug: string;
-  content: string;
+  // content: string;
+  article_content_md: string;
 }
 
 interface Suggestion {
@@ -33,7 +34,7 @@ function replaceSubstring(
 const ArticleDetail: React.FC = () => {
   const loaderData = useLoaderData() as SuggestionData;
   const [editorContent, setEditorContent] = useState(
-    loaderData.article.content
+    loaderData.article.article_content_md
   );
 
   const [suggestions, setSuggestions] = useState(

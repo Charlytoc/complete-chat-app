@@ -11,8 +11,7 @@ import { TChatLoader, TMessage } from "../../types/chatTypes";
 import { ChatHeader } from "../../components/ChatHeader/ChatHeader";
 import toast, { Toaster } from "react-hot-toast";
 import { playAudioFromBytes } from "../../modules/utils";
-import socketManager from "../../modules/socket/socketManager";
-
+import socketManager from "../../modules/socketManager";
 
 export default function ChatView() {
   const loaderData = useLoaderData() as TChatLoader;
@@ -98,11 +97,11 @@ export default function ChatView() {
 
     try {
       socketManager.emit("message", {
-          message: userMessage,
-          context: messages.map((msg) => `${msg.type}: ${msg.text}`).join("\n"),
-          model: model,
-          conversation: conversation ? conversation : loaderData.conversation,
-        });
+        message: userMessage,
+        context: messages.map((msg) => `${msg.type}: ${msg.text}`).join("\n"),
+        model: model,
+        conversation: conversation ? conversation : loaderData.conversation,
+      });
 
       setInput("");
       cleanAttachments();
@@ -170,8 +169,6 @@ export default function ChatView() {
     }
   };
 
-
-
   return (
     <>
       <Toaster />
@@ -185,7 +182,7 @@ export default function ChatView() {
         <div className="chat-messages">
           {messages &&
             messages.map((msg, index) => (
-              <Message       
+              <Message
                 {...msg}
                 key={index}
                 onGenerateSpeech={handleGenerateSpeech}

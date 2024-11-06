@@ -6,7 +6,9 @@ import { ChatMessages } from "../../components/Messages/Messages";
 import io from "socket.io-client";
 import { useLoaderData } from "react-router-dom";
 import { PUBLIC_TOKEN } from "../../modules/constants";
-// import { SpeechReceptor } from "../../components/SpeechReceptor/SpeechReceptor";
+import { Headline } from "../../components/Headline/Headline";
+import { SubHeadline } from "../../components/SubHeadline/SubHeadline";
+import { CallToAction } from "../../components/CallToAction/CallToAction";
 
 const socket = io("http://localhost:8001", { autoConnect: true });
 
@@ -130,9 +132,11 @@ export default function Root() {
 
   return (
     <>
-      {/* <SpeechReceptor socket={socket} /> */}
-      <ChatMessages chat={chat} />
-      <Talkie processAudio={processAudioExample} />
+      <main>
+        <Headline />
+        <SubHeadline />
+        <CallToAction />
+      </main>
     </>
   );
 }

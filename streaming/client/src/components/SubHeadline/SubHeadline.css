@@ -1,0 +1,38 @@
+.sub-headline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  overflow: hidden;
+  gap: 14px;
+  width: min(700px, 99vw);
+  margin-inline: auto;
+  border-radius: 10px;
+  color: white;
+  margin-top: 50px;
+}
+
+.simple-slider {
+  position: relative;
+  height: 50px; 
+  overflow: hidden;
+}
+
+.slider-text {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  font-weight: bold;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+  font-size: 30px;
+}
+
+.slider-text.active {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from models import Article
+from .models import Article, SitemapIndex, Sitemap
 
 # TODO: Investigate how signals works in Django and add a post_save signal to the article model and print its new content
 
@@ -12,10 +12,17 @@ We will sent a PUT request to that endpoint to update the article in the breathe
 """
 
 
-@receiver(post_save, sender=Article)
-def print_article_content(sender, instance, created, **kwargs):
+@receiver(post_save, sender=SitemapIndex)
+def sync_sitemap_index(sender, instance, created, **kwargs):
     if created:
-        print(f"New article created: {instance.title}")
-    else:
-        print(f"Article updated: {instance.title}")
-    print(f"Contente: {instance.content}")
+        print(f"New sitemap index created: {instance.url}")
+        result = instance.get_sitemaps()
+        if not result:
+            raise Exception("Error while syncing sitemap")
+
+
+@receiver(post_save, sender=Sitemap)
+def sync_sitemap(sender, instance, created, **kwargs):
+    if created:
+        print(f"Fetching articles for sitemap: {instance.url}")
+        instance.get_urls()

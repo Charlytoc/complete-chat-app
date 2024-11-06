@@ -193,3 +193,11 @@ class PublishableToken(models.Model):
             .filter(Q(expires_at__gt=utc_now) | Q(expires_at__isnull=True))
             .first()
         )
+
+    @classmethod
+    def create_token(self, duration_minutes=None, duration_hours=None, duration_days=3):
+        return self.objects.create(
+            duration_minutes=duration_minutes,
+            duration_hours=duration_hours,
+            duration_days=duration_days,
+        )

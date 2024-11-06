@@ -2,10 +2,10 @@ import { LoaderFunctionArgs } from "react-router-dom";
 import { getSuggestion, fetchArticles } from "../../modules/apiCalls";
 
 export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
-  const { slug } = params;
-  if (slug) {
+  const { id } = params;
+  if (id) {
     try {
-      const data = await getSuggestion(slug);
+      const data = await getSuggestion(id);
       return {
         article: data.article,
         suggestion: data.suggestion,

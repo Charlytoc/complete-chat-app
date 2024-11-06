@@ -1,10 +1,24 @@
+import uuid
 from django.db import models
+
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+import html
+import requests
+import markdown2
+from bs4 import BeautifulSoup
+from markdownify import markdownify as md
+from api.authenticate.models import PublishableToken
+
 # https://breathecode.herokuapp.com/v1/registry/asset
 
 
-class Sitemap(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class SitemapIndex(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    publish_token = models.ForeignKey(
+        PublishableToken, on_delete=models.SET_NULL, null=True, blank=True
+    )
     url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -13,22 +27,92 @@ class Sitemap(models.Model):
     def __str__(self):
         return self.url
 
-class Article(models.Model):
-    sitemap = models.ForeignKey(Sitemap, on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True)
-    content = models.TextField()
-    url = models.URLField(null=True, blank=True)
-    title = models.CharField(max_length=255)
-    keywords = models.JSONField()
-    language = models.CharField(max_length=10)
-    description = models.TextField(null=True, blank=True)
+    def get_sitemaps(self):
+        from .actions import get_all_sitemaps
+
+        result = get_all_sitemaps(self.id)
+        return result
+
+
+class Sitemap(models.Model):
+    index = models.ForeignKey(SitemapIndex, on_delete=models.CASCADE)
+    url = models.URLField()
+
+    last_sync = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    # TODO: Add property academy_id, this will be an integer field, it can be null or blank
-    academy_id = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        return self.url
+
+    def get_urls(self):
+        from .actions import get_all_urls_for_a_sitemap
+
+        result = get_all_urls_for_a_sitemap(self.id)
+        return result
+
+
+class Article(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sitemap = models.ForeignKey(Sitemap, on_delete=models.CASCADE)
+    content = models.TextField()
+    html_content = models.TextField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    title = models.CharField(max_length=255)
+    fetched = models.BooleanField(default=False)
+    language = models.CharField(max_length=10, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    last_sync = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    article_content_md = models.TextField(null=True, blank=True)
+
+    def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+    def fetch_content(self):
+        res = requests.get(self.url)
+
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        title = soup.title.string if soup.title else "No Title"
+        self.title = title
+
+        article = soup.find("article")
+        if article:
+            sanitized_content = str(article)
+            self.html_content = sanitized_content
+        else:
+
+            body = soup.find("body")
+            if body:
+                sanitized_content = str(body)
+                self.html_content = sanitized_content
+            else:
+                print("Neither <article> nor <body> tags found.")
+                return
+
+        for unwanted in soup.find_all(["script", "style"]):
+            unwanted.decompose()
+
+        decoded_content = self.html_content  # Use the sanitized content
+        self.article_content_md = md(decoded_content)
+
+        self.content = decoded_content
+
+
+        self.fetched = True
+        self.last_sync = timezone.now()
+        self.save()
+
+    def suggest_linking(self):
+        from .actions import suggest_internal_linking
+
+        suggest_internal_linking(self.id)
+
 
 class ArticleVersion(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
@@ -40,7 +124,11 @@ class ArticleVersion(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the object is not yet saved to the database
-            last_version = ArticleVersion.objects.filter(article=self.article).order_by('-version_number').first()
+            last_version = (
+                ArticleVersion.objects.filter(article=self.article)
+                .order_by("-version_number")
+                .first()
+            )
             if last_version:
                 self.version_number = last_version.version_number + 1
             else:
@@ -52,13 +140,13 @@ class ArticleVersion(models.Model):
 
 
 class Suggestion(models.Model):
-    REJECTED = 'REJECTED'
-    ACCEPTED = 'ACCEPTED'
-    PENDING = 'PENDING'
+    REJECTED = "REJECTED"
+    ACCEPTED = "ACCEPTED"
+    PENDING = "PENDING"
     STATUS_CHOICES = [
-        (REJECTED, 'Rejected'),
-        (ACCEPTED, 'Accepted'),
-        (PENDING, 'Pending'),
+        (REJECTED, "Rejected"),
+        (ACCEPTED, "Accepted"),
+        (PENDING, "Pending"),
     ]
 
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
@@ -74,7 +162,7 @@ class Suggestion(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Suggestion(for={self.article.title})'
+        return f"Suggestion(for={self.article.title})"
 
 
 class SystemPromptModel(models.Model):
