@@ -1,0 +1,18 @@
+.svgButton {
+  cursor: pointer;
+  display: flex;
+  position: relative;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.svgButton:hover {
+  filter: brightness(1.2);
+}
+
+.svgButton svg {
+  width: 30px;
+  height: 30px;
+}

@@ -1,4 +1,6 @@
 from django.http import JsonResponse
+from urllib.parse import urlparse
+
 from django.views import View
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -9,7 +11,9 @@ from django.shortcuts import get_object_or_404
 from .models import Article, Suggestion
 import random
 from rest_framework.permissions import AllowAny
-from .serializers import ArticleSerializer, SuggestionSerializer
+from .serializers import ArticleSerializer, SuggestionSerializer, SitemapIndexSerializer
+from .models import SitemapIndex
+from api.authenticate.models import PublishableToken
 
 
 def hello_world(request):
@@ -35,9 +39,9 @@ class ReceiveData(View):
 class SuggestionsView(View):
     permission_classes = [AllowAny]
 
-    def get(self, request, article_slug=None):
-        if article_slug:
-            article = get_object_or_404(Article, slug=article_slug)
+    def get(self, request, article_id=None):
+        if article_id:
+            article = get_object_or_404(Article, id=article_id)
             pending_suggestions = Suggestion.objects.filter(
                 article=article, status=Suggestion.PENDING
             )
@@ -105,3 +109,65 @@ class SuggestionsView(View):
             return JsonResponse({"message": "Invalid JSON."}, status=400)
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=500)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SitemapIndexView(View):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        sitemaps = SitemapIndex.objects.all()
+        data = serialize("json", sitemaps)
+        return JsonResponse(data, safe=False)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        sitemap = SitemapIndex.objects.create(**data)
+        return JsonResponse({"id": sitemap.id})
+
+
+def is_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except Exception:
+        return False
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class PublicSitemapIndexView(View):
+    permission_classes = [AllowAny]
+
+    def get(self, request, token):
+
+        sitemaps = SitemapIndex.objects.filter(publish_token__token=token)
+        if not sitemaps.exists():
+            return JsonResponse({"error": "Invalid token"}, status=404)
+
+        data = SitemapIndexSerializer(sitemaps, many=True).data
+        return JsonResponse(data, safe=False)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        url = data.get("url")
+        print(data, "RECEIVED DATA")
+        # CHeck if the url is indeed an url
+        if not url or not is_url(url):
+            return JsonResponse({"error": "A valid URL is required"}, status=400)
+
+        p = PublishableToken.create_token()
+        sitemap = SitemapIndex.objects.create(url=url, publish_token=p, last_sync=None)
+        return JsonResponse({"id": sitemap.id, "publish_token": p.token})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class PublicArticleFetcher(View):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        data = json.loads(request.body)
+        article_id = data.get("article_id")
+        a = Article.objects.get(id=article_id)
+        a.fetch_content()
+        a.suggest_linking()
+        return JsonResponse({"message": "Ready to magic"})

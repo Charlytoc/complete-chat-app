@@ -1,0 +1,37 @@
+.headline {
+  position: relative;
+  display: block;
+  padding: 20px;
+  text-align: center;
+  overflow: hidden;
+  cursor: none;
+  width: min(600px, 99vw);
+  margin-inline: auto;
+  border-radius: 10px;
+}
+
+.mouse-follower {
+    width: 20px;
+    height: 20px;
+    background-color: #7700b2;
+    border-radius: 50%;
+    display: block;
+    mix-blend-mode: color-burn;
+    animation: animated-box-shadow 4s infinite;
+}
+
+@keyframes animated-box-shadow {
+  0% {
+    box-shadow:
+      0px 0px 10px rgba(255, 0, 242, 0.566),
+      0px 0px 20px rgba(0, 0, 255, 0.566),
+      0px 0px 5px rgb(225, 255, 0);
+  }
+  50% {
+    box-shadow: 0px 0px 30px #330f97d6, 0px 0px 40px #7c81c2d6, 0px 0px 10px #7c81c2d6;
+  }
+  100% {
+    box-shadow: 0px 0px 2px rgba(117, 2, 133, 0.566), 
+    0px 0px 4px rgba(2, 2, 117, 0.566),;
+  }
+}

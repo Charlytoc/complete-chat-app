@@ -11,13 +11,20 @@
   line-height: 1.5;
   font-weight: 400;
   --active-color: rgb(14, 53, 61);
-  --highlighted-color: rgb(0, 144, 173);
+  --highlighted-color: rgb(0, 255, 162);
   --font-color: rgb(255, 255, 255);
   --bg-color: rgb(10, 9, 26);
   --hovered-color: rgb(3, 25, 30);
   --modals-color: rgb(255, 255, 255);
+  --primary-color: #3d0093;
+  --secondary-color: #0097b2;
+  --accent-color: #ac46ff;
+  --background-color: #101011;
+  --text-color: #333333;
+  --muted-color: #828282;
+  --border-color: #e0e0e0;
+  --fancy-gradient: linear-gradient(132deg, #510093 0%, #0032b2 100%);
   color-scheme: light dark;
-  background-color: var(--bg-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,6 +32,19 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #b7b4b4c6;
+    }
+    a:hover {
+      color: #747bff;
+      }
+      button {
+        background-color: #f9f9f9;
+        }
+        } */
 
 a {
   font-weight: 500;
@@ -39,44 +59,13 @@ html {
 }
 body {
   margin: 0;
+  color: white;
   min-height: 100vh;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-/* button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #b7b4b4c6;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }
 
 .nerko-one-regular {
@@ -96,7 +85,72 @@ button:focus-visible {
   background-color: #262626;
 }
 
-
 .highlighted {
   color: var(--highlighted-color);
+}
+.fancy-bg {
+  background: var(--fancy-gradient);
+  background-size: 200% 200%;
+  animation: fancy-animation 10s infinite;
+}
+
+.fancy-text {
+  color: transparent;
+  background: var(--fancy-gradient);
+  background-size: 200% 200%;
+  animation: fancy-animation 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  background-clip: text;
+}
+
+/* An animation to give movement to the bg */
+@keyframes fancy-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.text-white {
+  color: white !important;
+}
+
+.input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  margin: 10px 0;
+  width: 100%;
+  max-width: 400px;
+}
+.padding-big {
+  padding: 20px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+.flex-y {
+  flex-direction: column;
+}
+.gap-medium {
+  gap: 20px;
+}
+.align-center {
+  align-items: center;
+}
+
+.gap-small {
+  gap: 5px;
 }
