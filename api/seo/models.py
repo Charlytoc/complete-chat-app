@@ -78,6 +78,9 @@ class Article(models.Model):
 
         soup = BeautifulSoup(res.text, "html.parser")
 
+        for unwanted in soup.find_all(["script", "style"]):
+            unwanted.decompose()
+
         title = soup.title.string if soup.title else "No Title"
         self.title = title
 
@@ -95,10 +98,8 @@ class Article(models.Model):
                 print("Neither <article> nor <body> tags found.")
                 return
 
-        for unwanted in soup.find_all(["script", "style"]):
-            unwanted.decompose()
 
-        decoded_content = self.html_content  # Use the sanitized content
+        decoded_content = self.html_content 
         self.article_content_md = md(decoded_content)
 
         self.content = decoded_content

@@ -32,18 +32,19 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
 /* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #b7b4b4c6;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
+    }
+    a:hover {
+      color: #747bff;
+      }
+      button {
+        background-color: #f9f9f9;
+        }
+        } */
 
 a {
   font-weight: 500;
@@ -58,6 +59,7 @@ html {
 }
 body {
   margin: 0;
+  color: white;
   min-height: 100vh;
 }
 
@@ -144,4 +146,11 @@ h1 {
 }
 .gap-medium {
   gap: 20px;
+}
+.align-center {
+  align-items: center;
+}
+
+.gap-small {
+  gap: 5px;
 }

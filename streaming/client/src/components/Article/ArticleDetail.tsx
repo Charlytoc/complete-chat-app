@@ -34,7 +34,8 @@ function replaceSubstring(
 const ArticleDetail: React.FC = () => {
   const loaderData = useLoaderData() as SuggestionData;
   const [editorContent, setEditorContent] = useState(
-    loaderData.article.article_content_md
+    loaderData.article.article_content_md // TODO: This content should be the HTML content instead
+    // HINT: article.html_content es la key que nos interesa
   );
 
   const [suggestions, setSuggestions] = useState(
@@ -59,32 +60,29 @@ const ArticleDetail: React.FC = () => {
     setSuggestions(suggestionsCopy);
     console.log(loaderData.article.slug);
 
-    // TODO:: Sent a PUT request to the route v1/seo/article/{article_slug}
-    // In the JSON include the suggestion_id and the new_status, in this case: REJECTED
-    // JSON.stringify{suggestion_id: {rejectedSuggestion.id}, new_status:"REJECTED" }
     fetch(`v1/seo/article/${loaderData.article.slug}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         // @ts-ignore
         suggestion_id: rejectedSuggestion.id,
-        new_status: "REJECTED"
-      }),      
+        new_status: "REJECTED",
+      }),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Success: ', data);      
-    })
-    .catch((error) => {
-      console.error('Error: ', error)
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Success: ", data);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
   };
   const acceptSuggestion = (replacementText: string) => {
     // @ts-ignore
@@ -102,12 +100,12 @@ const ArticleDetail: React.FC = () => {
       setEditorContent(newContent);
       console.log(loaderData.article.slug);
 
-      // TODO: SENT A PUT REQUEST TO THE BACKEND 
+      // TODO: SENT A PUT REQUEST TO THE BACKEND
       // {new_status: "ACCEPTED", article_content: newContent, suggestion_id: suggestionAccepted.id}
       fetch(`v1/seo/article/${loaderData.article.slug}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           new_status: "ACCEPTED",
@@ -115,18 +113,18 @@ const ArticleDetail: React.FC = () => {
           suggestion_id: aceptedSuggestion.id,
         }),
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Succes: ', data);
-      })
-      .catch((error) => {
-        console.error('Error: ',error);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Succes: ", data);
+        })
+        .catch((error) => {
+          console.error("Error: ", error);
+        });
     }
   };
 
@@ -158,12 +156,11 @@ const ArticleDetail: React.FC = () => {
     ];
   }
 
-    console.log(suggestions);
-    
+  console.log(suggestions);
+
   return (
     <div className="article-detail-container">
       <h3>{loaderData.article.title}</h3>
-      <h3>{loaderData.article.slug}</h3>
       <div className="article-detail-section">{results.map((e) => e)}</div>
     </div>
   );
@@ -193,6 +190,7 @@ const SuggestionComponent = ({
   };
 
   const handleChange = (event) => {
+    // TODO: Esto va a cambiar. Debes poder imprimir exactamente qué elemento del DOM está siendo modificado
     setEditableText(event.target.innerText);
   };
 
@@ -223,7 +221,9 @@ const SuggestionComponent = ({
         contentEditable={true}
         onInput={handleChange}
         suppressContentEditableWarning={true}
-        ref={editableRef} // Asignar la referencia al div editable
+        ref={editableRef}
+        // TODO:  dangerouslySetInnerHTML={{ __html: editableText }}
+        // Set tiene que ver el contenido HTML renderizado
       >
         {editableText}
       </div>

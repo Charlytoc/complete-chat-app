@@ -13,7 +13,10 @@
   font-size: 48px;
   margin: 0;
 }
-
+.nav-links {
+  display: flex;
+  
+}
 .nav-links a {
   font-family: "Arial", sans-serif;
   font-size: 16px;
