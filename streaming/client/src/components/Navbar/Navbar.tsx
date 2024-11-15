@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SVGS } from "../../assets/svgs";
 import { SvgButton } from "../SvgButton/SvgButton";
 import toast from "react-hot-toast";
@@ -12,18 +12,48 @@ export const Navbar = () => {
   // {AVAILABLECREDITS} Credits y un svg de moneda (coin)
 
   // But is it is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  const checkLogIn = () => {
+    try {
+      const token = localStorage.getItem("public_token");
+      setIsLoggedIn(!!token);
+    } catch (error) {
+      console.error("Error checking loggin status", error);
+    }
+  };
+
+  const hanldeLogout = () => {
+    localStorage.removeItem("public_token");
+    setIsLoggedIn(false);
+    toast.success("Logged out successfully");
+  };
+
+  useEffect(()=> {
+    checkLogIn();
+  }, [])
+
   return (
     <nav className="navbar">
+      div
       <section className="logo">
         <h1 className="text-white">
           <strong>Chaseo</strong>
         </h1>
       </section>
       <section className="nav-links">
-        {/* if is logged in, don't show this buttons */}
-        <Link className="fancy-bg text-white" to={"/signup"}>
-          Signup
-        </Link>
+        {/* TODO if is logged in, don't show this buttons */}
+        {!isLoggedIn && (
+          <button className="fancy-bg text-white" onClick={() => navigate('/signup')}>
+            Signup
+          </button>
+        )}
+        {isLoggedIn && (
+          <button className="fancy-bg text-white" onClick={hanldeLogout}>
+            Loguot
+          </button>
+        )}
 
         <ChaseoCredits />
       </section>
@@ -35,6 +65,19 @@ const ChaseoCredits = () => {
   const {credits} = useStore((s)=>({
     credits: s.credits
   }))
+
+  const fetchCredits = async () => {
+    // const token = localStorage.getItem("token");
+    // const response = await fetch('url to credits', {
+    //   method: 'GET',
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //     'isPublic': 'false' || 'true',
+    //   }
+    // });
+    // const data = await response.json();
+    // useStore.setState({ credits: data.credits })
+  };
 
   useEffect(() => {
     // fetch credits from the user

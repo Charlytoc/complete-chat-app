@@ -15,7 +15,7 @@
 }
 .nav-links {
   display: flex;
-  
+  gap: 10px;    
 }
 .nav-links a {
   font-family: "Arial", sans-serif;
@@ -30,7 +30,9 @@
     color 0.1s ease;
 }
 
-
+.nav-links button:hover {
+  filter: brightness(1.2);
+}
 
 .nav-links a:hover {
   background-color: var(--primary-color);

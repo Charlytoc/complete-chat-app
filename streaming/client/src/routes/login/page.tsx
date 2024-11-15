@@ -26,7 +26,7 @@ export default function Login() {
         localStorage.setItem("token", response.data.token);
       }
       toast.success("Successfully logged in!");
-      navigate("/chat");
+      navigate("/dashboard");
     } catch (error) {
       setMessage(error.response?.data?.detail || "An error occurred");
       toast.error("An error occurred");

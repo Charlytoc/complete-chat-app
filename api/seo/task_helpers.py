@@ -8,7 +8,7 @@ def suggest_changes_to_article_logic(article_id: int):
         [f"{a.title}: {a.url}" for a in all_articles_with_the_same_language]
     )
 
-    system_prompt = generate_system_prompt(a.keywords, articles_links)
+    system_prompt = generate_system_prompt([], articles_links)
     article_text = f"{a.content}"
 
     suggestions_list: SuggestionsList = create_structured_completion(
