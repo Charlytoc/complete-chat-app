@@ -250,7 +250,7 @@ def create_completion_openai(
 
     completion = client.chat.completions.create(
         model=model,
-        max_tokens=500,
+        max_tokens=300,
         messages=[
             {
                 "role": "system",
@@ -274,7 +274,7 @@ def create_structured_completion(
         api_key=os.environ.get("OPENAI_API_KEY"),
     )
     completion = client.beta.chat.completions.parse(
-        model="gpt-4o-2024-08-06",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},

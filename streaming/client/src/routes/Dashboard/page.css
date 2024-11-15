@@ -9,3 +9,7 @@
 .article-detail:hover {
   background: var(--fancy-gradient);
 }
+
+body {
+  color: #000;
+}

@@ -8,7 +8,7 @@ import "./ArticleDetail.css";
 interface Article {
   title: string;
   slug: string;
-  // content: string;
+  html_content: string;
   article_content_md: string;
 }
 
@@ -34,8 +34,10 @@ function replaceSubstring(
 const ArticleDetail: React.FC = () => {
   const loaderData = useLoaderData() as SuggestionData;
   const [editorContent, setEditorContent] = useState(
-    loaderData.article.article_content_md // TODO: This content should be the HTML content instead
+    // loaderData.article.article_content_md 
+    // TODO: This content should be the HTML content instead
     // HINT: article.html_content es la key que nos interesa
+    loaderData.article.html_content
   );
 
   const [suggestions, setSuggestions] = useState(
@@ -189,8 +191,9 @@ const SuggestionComponent = ({
     rejectSuggestion();
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLDivElement>) => {
     // TODO: Esto va a cambiar. Debes poder imprimir exactamente qué elemento del DOM está siendo modificado
+    console.log("Modified element: ", event.currentTarget);
     setEditableText(event.target.innerText);
   };
 
@@ -224,6 +227,7 @@ const SuggestionComponent = ({
         ref={editableRef}
         // TODO:  dangerouslySetInnerHTML={{ __html: editableText }}
         // Set tiene que ver el contenido HTML renderizado
+        dangerouslySetInnerHTML={{ __html: editableText }}
       >
         {editableText}
       </div>

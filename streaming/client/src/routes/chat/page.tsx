@@ -114,10 +114,12 @@ export default function ChatView() {
     try {
       socketManager.connect();
 
+      
       // TODO: Send the token in every socket event, maybe we need to have a socket manager for the client ir order to have a straightforward interface
-      // const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       socketManager.emit("speech_request", {
         text,
+        token,
       });
     } catch (error) {
       console.error("Error generating speech:", error);
